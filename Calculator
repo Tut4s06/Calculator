@@ -1,0 +1,62 @@
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+class Calculator(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Calculadora')
+        self.resize(300, 400)#define o tamanho da janela
+        self.move(200, 200)#posiciona a janela (opcional)
+        self.interface()#criar a interface
+
+    def interface(self):
+        #layout principal
+        self.layout = QVBoxLayout()
+
+        #mostrador
+        self.display = QLineEdit()
+        self.display.setReadOnly(True)#nao permite que o usuario consiga interagir com o mostrador
+        self.layout.addWidget(self.display)
+
+        #layout de botões
+        self.buttons = QGridLayout()#organiza os botoes em grade
+        self.create_buttons()
+        self.layout.addLayout(self.buttons)
+
+        # configuração do layout principal
+        self.setLayout(self.layout)
+
+    def create_buttons(self):
+        #configuração dos botões
+        buttons = {                                                #|
+            '7': (0, 0), '8': (0, 1), '9': (0, 2), '/': (0, 3),    #|
+            '4': (1, 0), '5': (1, 1), '6': (1, 2), '*': (1, 3),    #| Dicionario --> botoes
+            '1': (2, 0), '2': (2, 1), '3': (2, 2), '-': (2, 3),    #|
+            '0': (3, 0), '⌫': (3, 1), '=': (3, 2), '+': (3, 3),   #|
+        }
+
+        for text, pos in buttons.items():
+            button = QPushButton(text)
+            button.clicked.connect(self.on_button_click)
+            self.buttons.addWidget(button, pos[0], pos[1])
+
+    def on_button_click(self):
+        #lógica dos botões
+        conta = self.sender().text() #".text()" vai armazenar o texto do botao clicado  |  "self.sender()" vai devolver o valor do botao clicado
+
+        if conta == "⌫":
+            self.display.clear()#apaga o texto do mostrador
+            
+        elif conta == "=":
+            result = eval(self.display.text())# eval() resolve a operacao
+            self.display.setText(str(result))#faz aparecer o resultado no mostrador
+            
+        else:
+            self.display.setText(self.display.text() + conta)#permite construir uma expressao
+
+app = QApplication([])
+window = Calculator()
+window.show()
+app.exec()
